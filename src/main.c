@@ -182,7 +182,8 @@ int version(int argc, char* argv[], GString* result) {
 // first argument tells whether to print or to dump
 int print_layout_command(int argc, char** argv, GString* result) {
     HSTag* tag = NULL;
-    if (argc >= 2) {
+    // an empty argv[1] means current focused tag
+    if (argc >= 2 && argv[1][0] != '\0') {
         tag = find_tag(argv[1]);
     }
     // if no tag was found
@@ -191,10 +192,12 @@ int print_layout_command(int argc, char** argv, GString* result) {
         tag = m->tag;
     }
     assert(tag != NULL);
+
+    HSFrame* frame = lookup_frame(tag->frame, argc >= 3 ? argv[2] : "");
     if (argc > 0 && !strcmp(argv[0], "dump")) {
-        dump_frame_tree(tag->frame, result);
+        dump_frame_tree(frame, result);
     } else {
-        print_tag_tree(tag, result);
+        print_frame_tree(frame, result);
     }
     return 0;
 }
